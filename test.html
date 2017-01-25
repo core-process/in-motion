@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+    <style>
+    body {
+      background: linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px,
+            linear-gradient(207deg, #151515 5px, transparent 5px) 10px 0px,
+            linear-gradient(27deg, #222 5px, transparent 5px) 0px 10px,
+            linear-gradient(207deg, #222 5px, transparent 5px) 10px 5px,
+            linear-gradient(90deg, #1b1b1b 10px, transparent 10px),
+            linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424);
+      background-size: 20px 20px;
+      background-color: #131313;
+    }
+    div {
+      height: 900px;
+      width: 60%;
+      min-width: 600px;
+      margin: 100px;
+      margin-left: auto;
+      margin-right: auto;
+      overflow: auto;
+      box-shadow: 0 0 3px 5px white;
+    }
+    .level1 {
+      background-color: #fff;
+      background-image:
+        linear-gradient(90deg, transparent 79px, #abced4 79px, #abced4 81px, transparent 81px),
+        linear-gradient(#eee .1em, transparent .1em);
+      background-size: 100% 1.2em;
+    }
+    .level2 {
+      background-color:white;
+      background-image: linear-gradient(90deg, rgba(200,0,0,.5) 50%, transparent 50%),
+        linear-gradient(rgba(200,0,0,.5) 50%, transparent 50%);
+      background-size:50px 50px;
+    }
+    .level3 {
+      background-size: 50px 50px;
+      background-color: #0ae;
+      background-image: linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);
+      overflow: auto;
+    }
+    </style>
+    <script language="javascript" type="text/javascript">
+      window.exports = { };
+    </script>
+    <script language="javascript" type="text/javascript" src="build/module.js"></script>
+  </head>
+  <body>
+    <div class="level1">
+      <div class="level2">
+        <div class="level3">
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
