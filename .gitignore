@@ -1,2 +1,4 @@
 /build
 /node_modules
+/test/build
+/test/node_modules

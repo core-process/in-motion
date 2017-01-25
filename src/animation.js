@@ -1,4 +1,7 @@
-import { hasActiveQueues } from './queueing.js';
+import {
+  hasActiveQueues, getActiveQueues,
+  getQueue, deactivateQueue
+} from './queueing.js';
 import { setScrollPosition } from './metrics.js';
 
 let currentRequest = null;
@@ -6,8 +9,8 @@ let lastTimestamp = null;
 
 export function activateAnimation() {
   if(!currentRequest && hasActiveQueues() > 0) {
-    lastTimestamp = Date.now();
-    currentRequest = requestAnimationFrame(animationFrameWrapper);
+    lastTimestamp = null;
+    currentRequest = requestAnimationFrame(frame);
   }
 }
 
@@ -19,15 +22,18 @@ export function deactivateAnimation() {
   }
 }
 
-export function animationFrameWrapper() {
+export function frame() {
   const now = Date.now();
-  console.log('animation frame', now);
-  for(let container of getActiveContainer()) {
+  if(!lastTimestamp) {
+    lastTimestamp = now;
+  }
+  console.log('animation frame', now-lastTimestamp);
+  for(let container of getActiveQueues()) {
     containerFrame(container, now);
   }
   if(hasActiveQueues() > 0) {
     lastTimestamp = now;
-    currentRequest = requestAnimationFrame(animationFrameWrapper);
+    currentRequest = requestAnimationFrame(frame);
   }
   else {
     lastTimestamp = null;
@@ -62,9 +68,17 @@ export function containerFrame(container, now) {
 
   // handle completion of sequence
   if(sequence.progress >= sequence.duration) {
+    try {
+      sequence.callback({
+        status: 'completed',
+        progress: sequence.progress,
+        duration: sequence.duration,
+      });
+    }
+    catch(e) { }
     queue.shift();
     if(queue.length == 0) {
-      deactivateContainer(container);
+      deactivateQueue(container);
     }
   }
 }

@@ -31,14 +31,25 @@ export function hasActiveQueues() {
 }
 
 export function clearQueue(container) {
+  const queue = getQueue(container);
+  // execute all pending callbacks
+  for(let sequence of queue) {
+    try {
+      sequence.callback({
+        status: 'cancelled',
+        progress: sequence.progress,
+        duration: sequence.duration,
+      });
+    }
+    catch(e) { }
+  }
   // clear queue
-  getQueue(container)
-    .length = 0;
+  queue.length = 0;
   // deactivate queue
   deactivateQueue(container);
 }
 
-export function addToQueue(container, origin, target, transition, duration, stoppable) {
+export function addToQueue(container, origin, target, transition, duration, stoppable, callback) {
   // put into queue
   getQueue(container)
     .push({
@@ -48,6 +59,7 @@ export function addToQueue(container, origin, target, transition, duration, stop
       duration,
       stoppable,
       progress: 0,
+      callback,
     });
   // activate queue
   activateQueue(container);
