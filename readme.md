@@ -6,6 +6,14 @@
 
 ...
 
+## Features
+
+- queue vs override
+- immediate container or container on every level
+- jump vs pause on frame skip
+- stop an user interaction
+- positioning: fixed value, element (with formula for position relative to the element), or function for repeated evaluation
+
 ## Installation
 
 Install the `in-motion` module via

@@ -1,4 +1,4 @@
-import * as transitions from './transitions.js';
+import * as easings from './easings.js';
 import { addToQueue, clearQueue, getActiveQueues } from './queueing.js';
 import { getScrollMetrics } from './metrics.js';
 
@@ -19,9 +19,9 @@ function validateTarget(target) {
   }
 }
 
-function validateTransition(transition) {
-  if( typeof transition !== 'function' && typeof target !== 'string' ) {
-    throw new Error('invalid transition');
+function validateEasing(easing) {
+  if( typeof easing !== 'function' && typeof easing !== 'string' ) {
+    throw new Error('invalid easing');
   }
 }
 
@@ -54,7 +54,7 @@ export async function scroll(params) {
   let {
     container,
     target,
-    transition,
+    easing,
     duration,
     stoppable,
     enqueue,
@@ -64,7 +64,7 @@ export async function scroll(params) {
   // validate parameter
   validateContainer(container);
   validateTarget(target);
-  validateTransition(transition);
+  validateEasing(easing);
   validateDuration(duration);
   validateStoppable(stoppable);
   validateEnqueue(enqueue);
@@ -75,8 +75,8 @@ export async function scroll(params) {
     const value = target;
     target = () => value;
   }
-  if( typeof transition === 'string' ) {
-    transition = transitions[transition];
+  if( typeof easing === 'string' ) {
+    easing = easings[easing];
   }
   if( typeof stoppable === 'undefined' ) {
     stoppable = true;
@@ -102,7 +102,7 @@ export async function scroll(params) {
       container,
       origin,
       target,
-      transition,
+      easing,
       duration,
       stoppable,
       (result) => {

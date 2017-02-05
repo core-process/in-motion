@@ -40,6 +40,7 @@ export function clearQueue(container) {
         progress: sequence.progress,
         duration: sequence.duration,
       });
+      console.info('in-motion: sequence cancelled');
     }
     catch(e) { }
   }
@@ -49,17 +50,20 @@ export function clearQueue(container) {
   deactivateQueue(container);
 }
 
-export function addToQueue(container, origin, target, transition, duration, stoppable, callback) {
+export function addToQueue(container, origin, target, easing, duration, stoppable, callback) {
   // put into queue
   getQueue(container)
     .push({
       origin,
       target,
-      transition,
+      targetValue: null,
+      easing,
       duration,
       stoppable,
       progress: 0,
+      relativeProgress: 0,
       callback,
+      frameDrops: 0,
     });
   // activate queue
   activateQueue(container);

@@ -4,39 +4,27 @@ const level1 = document.querySelector('.level1');
 const level2 = document.querySelector('.level2');
 const level3 = document.querySelector('.level3');
 
+let targetTop = 500;
+
 setTimeout(
-  () => {
-    for(let i=0; i<2; ++i) {
-      scroll({
-        container: level1,
-        target: () => ({ left: 0, top: 150 }),
-        transition: (origin, target, progress) => ({ left: 0, top: 150 * progress }),
-        duration: 2 * 1000,
-        stoppable: true,
-        enqueue: true,
-        failOnCancel: false,
-      })
-        .then((result) => { console.log('level 1 scrolling no. ' + i + ' ' + result.status, JSON.stringify(result)); })
-        .catch((error) => { console.log(error.message); });
-      scroll({
-        container: level2,
-        target: () => ({ left: 0, top: 150 }),
-        transition: (origin, target, progress) => ({ left: 0, top: 150 * progress }),
-        duration: 2 * 1000,
-        stoppable: true,
-        enqueue: true,
-        failOnCancel: true,
-      })
-        .then((result) => { console.log('level 2 scrolling no. ' + i + ' ' + result.status, JSON.stringify(result)); })
-        .catch((error) => { console.log(error.message); });
-    }
+  async () => {
+    const result = await scroll({
+      container: level1,
+      target: () => ({ left: 0, top: targetTop }),
+      easing: 'easeInOutCubic',
+      duration: 3 * 1000,
+    });
+    console.log(JSON.stringify(result));
   },
   1 * 1000
 );
 
+/*
 setTimeout(
   () => {
-    stopScroll();
+    console.log('set target top to new value');
+    targetTop = 500;
   },
   2 * 1000
 );
+*/
