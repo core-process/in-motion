@@ -1,6 +1,7 @@
 import * as easings from './easings.js';
 import { addToQueue, clearQueue, getActiveQueues } from './queueing.js';
 import { getScrollMetrics } from './metrics.js';
+import './interaction.js';
 
 function validateContainer(container) {
   if( !(container instanceof HTMLElement) && !(container instanceof Window)) {
