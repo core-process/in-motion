@@ -28,7 +28,6 @@ export function frame() {
   if(!lastTimestamp) {
     lastTimestamp = now;
   }
-  //console.log('animation frame', now-lastTimestamp);
   for(let container of getActiveQueues()) {
     containerFrame(container, now);
   }
@@ -65,15 +64,15 @@ export function containerFrame(container, now) {
   sequence.relativeProgress = sequence.progress / sequence.duration;
 
   // determine target
-  const ptv = sequence.targetValue;
+  const oldTargetValue = sequence.targetValue;
   sequence.targetValue = sequence.target();
 
   // handle target update
-  if(!_.isEqual(sequence.targetValue, ptv)) {
-    console.info('in-motion: target updated - new = ' + JSON.stringify(sequence.targetValue) + '; previous = ' + JSON.stringify(ptv));
+  if(!_.isEqual(sequence.targetValue, oldTargetValue)) {
+    console.info('in-motion: target updated; new =' + JSON.stringify(sequence.targetValue) + '; old =' + JSON.stringify(oldTargetValue));
 
-    // create transition method
-    let transition =
+    // transition factory
+    let transitionFactory =
       (origin, target, easing) =>
         (property) =>
           (progress) =>
@@ -85,23 +84,23 @@ export function containerFrame(container, now) {
               )
             : undefined;
 
-    transition = transition(
+    transitionFactory = transitionFactory(
       sequence.origin,
       sequence.targetValue,
       sequence.easing
     );
 
-    transition = {
-      left: transition('left'),
-      top: transition('top'),
+    const newTransition = {
+      left: transitionFactory('left'),
+      top: transitionFactory('top'),
     };
 
-    if(!ptv) {
-      sequence.transition = transition;
+    if(!sequence.transition) {
+      sequence.transition = newTransition;
     }
     else {
-      // migration routine
-      let migration =
+      // migration factory
+      let migrationFactory =
         (progressBegin, progressEnd, prevTrans, transition) =>
           (property) =>
             (progress) => {
@@ -119,16 +118,16 @@ export function containerFrame(container, now) {
               return pt * (1 - scale) + ct * scale;
             };
 
-      migration = migration(
+      migrationFactory = migrationFactory(
         sequence.relativeProgress,
-        (sequence.relativeProgress + 1.0) / 2.0,
+        sequence.relativeProgress * 0.3 + 1.0 * 0.7,
         sequence.transition,
-        transition
+        newTransition
       );
 
       sequence.transition = {
-        left: migration('left'),
-        top: migration('top'),
+        left: migrationFactory('left'),
+        top: migrationFactory('top'),
       };
     }
   }
@@ -141,7 +140,6 @@ export function containerFrame(container, now) {
 
   // update scroll position
   setScrollPosition(container, reqPos);
-  console.log('reqPos = ', JSON.stringify(reqPos));
 
   // handle completion of sequence
   if(sequence.progress >= sequence.duration) {
@@ -150,7 +148,7 @@ export function containerFrame(container, now) {
     if( (typeof reqPos.left !== 'undefined' && curPos.left !== reqPos.left)
      || (typeof reqPos.top !== 'undefined' && curPos.top !== reqPos.top)
     ) {
-      console.info('in-motion: requested position could not be reached - requested = ' + JSON.stringify(reqPos) + '; current = ' + JSON.stringify(curPos));
+      console.info('in-motion: requested position could not be reached; requested =' + JSON.stringify(reqPos) + '; current =' + JSON.stringify(curPos));
     }
 
     // call completion handler
@@ -171,7 +169,7 @@ export function containerFrame(container, now) {
 
     // warn about detected frame drops
     if(sequence.frameDrops > 0) {
-      console.info('in-motion: frame drops detected - ', sequence.frameDrops);
+      console.info('in-motion: frame drops detected; count =', sequence.frameDrops);
     }
   }
 }
