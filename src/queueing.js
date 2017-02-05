@@ -58,6 +58,7 @@ export function addToQueue(container, origin, target, easing, duration, stoppabl
       target,
       targetValue: null,
       easing,
+      transition: { left: null, top: null },
       duration,
       stoppable,
       progress: 0,

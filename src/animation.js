@@ -64,31 +64,84 @@ export function containerFrame(container, now) {
   );
   sequence.relativeProgress = sequence.progress / sequence.duration;
 
-  // get target
-  const target = sequence.target();
+  // determine target
+  const ptv = sequence.targetValue;
+  sequence.targetValue = sequence.target();
 
-  if(sequence.targetValue && !_.isEqual(target, sequence.targetValue)) {
-    console.info('in-motion: target changed - new = ' + JSON.stringify(target) + '; previous = ' + JSON.stringify(sequence.targetValue));
-  }
-  sequence.targetValue = target;
+  // handle target update
+  if(!_.isEqual(sequence.targetValue, ptv)) {
+    console.info('in-motion: target updated - new = ' + JSON.stringify(sequence.targetValue) + '; previous = ' + JSON.stringify(ptv));
 
-  // get requested position
-  const reqPos = { };
+    // create transition method
+    let transition =
+      (origin, target, easing) =>
+        (property) =>
+          (progress) =>
+            typeof target[property] !== 'undefined'
+            ? Math.round(
+                  (origin[property])
+                + (target[property] - origin[property])
+                    * easing(progress, property)
+              )
+            : undefined;
 
-  function transition(property) {
-    if(typeof sequence.targetValue[property] !== 'undefined') {
-      const o = sequence.origin[property];
-      const t = sequence.targetValue[property];
-      const e = sequence.easing(sequence.relativeProgress, property);
-      reqPos[property] = Math.round(o + (t - o) * e);
+    transition = transition(
+      sequence.origin,
+      sequence.targetValue,
+      sequence.easing
+    );
+
+    transition = {
+      left: transition('left'),
+      top: transition('top'),
+    };
+
+    if(!ptv) {
+      sequence.transition = transition;
+    }
+    else {
+      // migration routine
+      let migration =
+        (progressBegin, progressEnd, prevTrans, transition) =>
+          (property) =>
+            (progress) => {
+              const scale = Math.min(
+                  (progress - progressBegin)
+                / (progressEnd - progressBegin),
+                1.0
+              );
+              const pt = prevTrans[property](progress),
+                    ct = transition[property](progress);
+              if(typeof pt === 'undefined')
+                return ct;
+              if(typeof ct === 'undefined')
+                return pt;
+              return pt * (1 - scale) + ct * scale;
+            };
+
+      migration = migration(
+        sequence.relativeProgress,
+        (sequence.relativeProgress + 1.0) / 2.0,
+        sequence.transition,
+        transition
+      );
+
+      sequence.transition = {
+        left: migration('left'),
+        top: migration('top'),
+      };
     }
   }
 
-  transition('left');
-  transition('top');
+  // get requested position
+  const reqPos = {
+    left: sequence.transition.left(sequence.relativeProgress),
+    top: sequence.transition.top(sequence.relativeProgress),
+  };
 
   // update scroll position
   setScrollPosition(container, reqPos);
+  console.log('reqPos = ', JSON.stringify(reqPos));
 
   // handle completion of sequence
   if(sequence.progress >= sequence.duration) {
