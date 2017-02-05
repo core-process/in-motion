@@ -49,6 +49,12 @@ function validateFailOnCancel(failOnCancel) {
   }
 }
 
+function validateSoftFrameSkip(failOnCancel) {
+  if( typeof softFrameSkip !== 'boolean' && typeof softFrameSkip !== 'undefined' ) {
+    throw new Error('invalid softFrameSkip');
+  }
+}
+
 export async function scroll(params) {
   // extract params
   let {
@@ -59,6 +65,7 @@ export async function scroll(params) {
     stoppable,
     enqueue,
     failOnCancel,
+    softFrameSkip,
   } = params;
 
   // validate parameter
@@ -69,6 +76,7 @@ export async function scroll(params) {
   validateStoppable(stoppable);
   validateEnqueue(enqueue);
   validateFailOnCancel(failOnCancel);
+  validateSoftFrameSkip(softFrameSkip);
 
   // fix parameter
   if( typeof target === 'object' ) {
@@ -86,6 +94,9 @@ export async function scroll(params) {
   }
   if( typeof failOnCancel === 'undefined' ) {
     failOnCancel = false;
+  }
+  if( typeof softFrameSkip === 'undefined' ) {
+    softFrameSkip = true;
   }
 
   // get origin metrics
@@ -105,6 +116,7 @@ export async function scroll(params) {
       easing,
       duration,
       stoppable,
+      softFrameSkip,
       (result) => {
         if(failOnCancel && result.status === 'cancelled') {
           reject(new Error('cancelled'));

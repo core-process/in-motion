@@ -52,7 +52,9 @@ export function containerFrame(container, now) {
   // calculate time delta and detect frame drops
   let timeDelta = now - lastTimestamp;
   if(timeDelta >= 30) {
-    timeDelta = 30;
+    if(sequence.softFrameSkip) {
+      timeDelta = 30;
+    }
     sequence.frameDrops += 1;
   }
 

@@ -50,7 +50,7 @@ export function clearQueue(container) {
   deactivateQueue(container);
 }
 
-export function addToQueue(container, origin, target, easing, duration, stoppable, callback) {
+export function addToQueue(container, origin, target, easing, duration, stoppable, softFrameSkip, callback) {
   // put into queue
   getQueue(container)
     .push({
@@ -61,6 +61,7 @@ export function addToQueue(container, origin, target, easing, duration, stoppabl
       transition: null,
       duration,
       stoppable,
+      softFrameSkip,
       progress: 0,
       relativeProgress: 0,
       callback,
