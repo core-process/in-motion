@@ -29,6 +29,10 @@ yarn add in-motion
 
 ## Usage
 
+The module exports the functions ``scroll({ ... }) -> Promise`` and ``stopScroll(container)``.
+
+### scroll
+
 | Parameter | Description | Example | Default Value |
 | :--- | :--- | :--- | :--- |
 | `container` | scroll-container, either an `HTMLElement` or a `Window` | `window` | container of `target.element` in case it is provided |
