@@ -180,6 +180,9 @@ export async function scroll(params) {
   if( typeof easing === 'string' ) {
     easing = easings[easing];
   }
+  if( typeof easing === 'undefined' ) {
+    easing = easings.easeInOutCubic;
+  }
   if( typeof stoppable === 'undefined' ) {
     stoppable = true;
   }

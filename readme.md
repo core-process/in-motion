@@ -31,11 +31,16 @@ yarn add in-motion
 
 | Parameter | Description | Example | Default Value |
 | :--- | :--- | :--- | :--- |
-| `container` | scroll-container, either an `HTMLElement` or a `Window` | `window` | container of `target.element` if provided |
-| `target` | function which evaluates to target scroll coordinates | `() => { top }` | none |
+| `container` | scroll-container, either an `HTMLElement` or a `Window` | `window` | container of `target.element` in case it is provided |
+| `target` | function which evaluates to target scroll coordinates | `() => ({ top })` | none |
 |          | or object which describes target scroll coordinates in relation to an `HTMLElement`: | | |
 | `target.element` | target element, either `HTMLElement` or a css selector string | `'.some .element'` | none |
 | `target.vertical` | vertical position in relation to target element, valid formats are `/(top)|(bottom)|(!?-?\d+px)|(!?-?\d+%)/` (enables vertical scrolling) | `'-20px'` | none |
 | `target.horizontal` | horizontal position in relation to target element, valid formats are `/(left)|(right)|(!?-?\d+px)|(!?-?\d+%)/` (enables horizontal scrolling) | `'-20px'` | none |
 | `target.skipIfVisible` | skip scrolling if target element is visible within container  | `true` | `false` |
-| `` |  | `` |
+| `easing` | easing behavior of scrolling animation, either a string or a function of signature `(x) => y` where `0 <= x <= 1` | `'swing'` | `'easeInOutCubic'` |
+| `duration` | duration of scrolling animation in milliseconds | `3 * 1000` | none |
+| `stoppable` | stoppable by user interaction, e.g. mouse click, key press, ... | `false` | `true` |
+| `enqueue` | enqueue scrolling request instead of overriding all queued requests  | `false` | `true` |
+| `failOnCancel` | fail promise if scrolling request gets cancelled | `true` | `false` |
+| `softFrameSkip` | soften up frame skips by pausing if frame skip gets detected  | `false` | `true` |
