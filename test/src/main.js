@@ -1,18 +1,12 @@
 import { scroll, stopScroll } from '../../';
 
-const level1 = document.querySelector('.level1');
-const level2 = document.querySelector('.level2');
-const level3 = document.querySelector('.level3');
-
-let targetTop = 200;
-
 setTimeout(
   async () => {
     const result = await scroll({
-      container: level1,
-      target: () => ({ left: 0, top: targetTop }),
+      container: document.querySelector('.container'),
+      target: { element: '.target2', vertical: '-10%', skipIfVisible: false },
       easing: 'easeInOutCubic',
-      duration: 6 * 1000,
+      duration: 3 * 1000,
     });
     console.log(JSON.stringify(result));
   },
@@ -21,16 +15,7 @@ setTimeout(
 
 setTimeout(
   () => {
-    console.log('set target top to new value');
-    targetTop = 400;
+    document.querySelector('.target2').style.marginTop = '200px';
   },
-  2 * 1000
-);
-
-setTimeout(
-  () => {
-    console.log('set target top to new value');
-    targetTop = 600;
-  },
-  4 * 1000
+  2.5 * 1000
 );

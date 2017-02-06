@@ -1,12 +1,13 @@
 
 export function getLocalClientRect(container, element) {
   var containerRect = container.getBoundingClientRect(),
+      containerMetrics = getScrollMetrics(container),
       elementRect = element.getBoundingClientRect();
   return {
-    left: elementRect.left - containerRect.left,
-    top: elementRect.top - containerRect.top,
-    right: elementRect.left - containerRect.left + elementRect.width,
-    bottom: elementRect.top - containerRect.top + elementRect.height,
+    left: elementRect.left - containerRect.left + containerMetrics.scrollPosition.left,
+    top: elementRect.top - containerRect.top + containerMetrics.scrollPosition.top,
+    right: elementRect.left - containerRect.left + elementRect.width + containerMetrics.scrollPosition.left,
+    bottom: elementRect.top - containerRect.top + elementRect.height + containerMetrics.scrollPosition.top,
     width: elementRect.width,
     height: elementRect.height,
   };

@@ -1,6 +1,7 @@
 import * as easings from './easings.js';
 import { addToQueue, clearQueue, getActiveQueues } from './queueing.js';
-import { getScrollMetrics } from './metrics.js';
+import { getScrollMetrics, getLocalClientRect } from './metrics.js';
+import { findContainer } from './container.js';
 import './interaction.js';
 
 function validateContainer(container) {
@@ -15,13 +16,13 @@ function validateContainer(container) {
 }
 
 function validateTarget(target) {
-  if( typeof target !== 'function' && typeof target !== 'object' ) {
+  if( typeof target !== 'function' ) {
     throw new Error('invalid target');
   }
 }
 
 function validateEasing(easing) {
-  if( typeof easing !== 'function' && typeof easing !== 'string' ) {
+  if( typeof easing !== 'function' ) {
     throw new Error('invalid easing');
   }
 }
@@ -33,28 +34,67 @@ function validateDuration(duration) {
 }
 
 function validateStoppable(stoppable) {
-  if( typeof stoppable !== 'boolean' && typeof stoppable !== 'undefined' ) {
+  if( typeof stoppable !== 'boolean' ) {
     throw new Error('invalid stoppable');
   }
 }
 
 function validateEnqueue(enqueue) {
-  if( typeof enqueue !== 'boolean' && typeof enqueue !== 'undefined' ) {
+  if( typeof enqueue !== 'boolean' ) {
     throw new Error('invalid enqueue');
   }
 }
 
 function validateFailOnCancel(failOnCancel) {
-  if( typeof failOnCancel !== 'boolean' && typeof failOnCancel !== 'undefined' ) {
+  if( typeof failOnCancel !== 'boolean' ) {
     throw new Error('invalid failOnCancel');
   }
 }
 
-function validateSoftFrameSkip(failOnCancel) {
-  if( typeof softFrameSkip !== 'boolean' && typeof softFrameSkip !== 'undefined' ) {
+function validateSoftFrameSkip(softFrameSkip) {
+  if( typeof softFrameSkip !== 'boolean' ) {
     throw new Error('invalid softFrameSkip');
   }
 }
+
+function toPixel(base, span, value) {
+  if(typeof value === 'string') {
+    if(!isNaN(value)) {
+      value = parseFloat(value);
+    }
+    else
+    if(value == 'top' || value == 'left') {
+      value = 0;
+    }
+    else
+    if(value == 'bottom' || value == 'right') {
+      value = span;
+    }
+    else
+    if(value.substr(-1) == '%') {
+      const inverse = value.substr(0, 1) == '!';
+      value = parseFloat(value.substr(inverse ? 1 : 0, value.length-1)) / 100;
+      value = span * (inverse ? (1 - value) : value);
+    }
+    else
+    if(value.substr(-2) == 'px') {
+      const inverse = value.substr(0, 1) == '!';
+      value = parseFloat(value.substr(inverse ? 1 : 0, value.length-2));
+      value = inverse ? (span - value) : (0 + value);
+    }
+    else {
+      throw new Error('invalid measure string');
+    }
+  }
+  else
+  if(typeof value === 'number') {
+    value = value;
+  }
+  else {
+    throw new Error('invalid measure data type');
+  }
+  return base + value;
+};
 
 export async function scroll(params) {
   // extract params
@@ -69,20 +109,73 @@ export async function scroll(params) {
     softFrameSkip,
   } = params;
 
-  // validate parameter
-  validateContainer(container);
-  validateTarget(target);
-  validateEasing(easing);
-  validateDuration(duration);
-  validateStoppable(stoppable);
-  validateEnqueue(enqueue);
-  validateFailOnCancel(failOnCancel);
-  validateSoftFrameSkip(softFrameSkip);
+  let skipHorizontal = false,
+      skipVertical = false;
 
   // fix parameter
   if( typeof target === 'object' ) {
-    const value = target;
-    target = () => value;
+    if(typeof target.left === 'number' || typeof target.top === 'number') {
+      const value = target;
+      target = () => value;
+    }
+    else
+    if(  target.element instanceof HTMLElement
+      || typeof target.element === 'string'
+    ) {
+      const value = target;
+      // resolve element function
+      const resolveElement = () => {
+        const element =
+          (value.element instanceof HTMLElement)
+            ? value.element
+            : document.querySelector(value.element);
+        if(!element) {
+          throw new Error('could not find element');
+        }
+        return element;
+      };
+      // lookup container
+      if(!container) {
+        container = findContainer(
+          resolveElement(),
+          !!value.vertical,
+          !!value.horizontal
+        );
+      }
+      // handle skipIfVisible flag
+      skipHorizontal = (typeof value.horizontal === 'undefined');
+      skipVertical = (typeof value.vertical === 'undefined');
+      if(value.skipIfVisible) {
+        const element = resolveElement(),
+              elementRect = getLocalClientRect(container, element),
+              containerMetrics = getScrollMetrics(container);
+        if(!skipHorizontal) {
+          if(  elementRect.left >= containerMetrics.scrollPosition.left
+            && elementRect.right < (containerMetrics.scrollPosition.left + containerMetrics.viewportSize.width)) {
+            skipHorizontal = true;
+          }
+        }
+        if(!skipVertical) {
+          if(  elementRect.top >= containerMetrics.scrollPosition.top
+            && elementRect.bottom < (containerMetrics.scrollPosition.top + containerMetrics.viewportSize.height)) {
+            skipVertical = true;
+          }
+        }
+      }
+      // create target function
+      target = () => {
+        const element = resolveElement(),
+              elementRect = getLocalClientRect(container, element),
+              result = { };
+        if(!skipHorizontal) {
+          result.left = toPixel(elementRect.left, elementRect.width, value.horizontal);
+        }
+        if(!skipVertical) {
+          result.top = toPixel(elementRect.top, elementRect.height, value.vertical);
+        }
+        return result;
+      };
+    }
   }
   if( typeof easing === 'string' ) {
     easing = easings[easing];
@@ -98,6 +191,21 @@ export async function scroll(params) {
   }
   if( typeof softFrameSkip === 'undefined' ) {
     softFrameSkip = true;
+  }
+
+  // validate parameter
+  validateContainer(container);
+  validateTarget(target);
+  validateEasing(easing);
+  validateDuration(duration);
+  validateStoppable(stoppable);
+  validateEnqueue(enqueue);
+  validateFailOnCancel(failOnCancel);
+  validateSoftFrameSkip(softFrameSkip);
+
+  // skip if possible
+  if(skipHorizontal && skipVertical) {
+    return { status: 'skipped', progress: 0, duration };
   }
 
   // get origin metrics
