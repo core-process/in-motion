@@ -40,7 +40,7 @@ yarn add in-motion
 | `target.skipIfVisible` | skip scrolling if target element is visible within container  | `true` | `false` |
 | `easing` | easing behavior of scrolling animation, either a string or a function of signature `(x) => y` where `0 <= x <= 1` | `'swing'` | `'easeInOutCubic'` |
 | `duration` | duration of scrolling animation in milliseconds | `3 * 1000` | none |
-| `stoppable` | stoppable by user interaction, e.g. mouse click, key press, ... | `false` | `true` |
+| `stoppable` | stoppable by user interaction, e.g. mouse click, key press or mouse scrolling | `false` | `true` |
 | `enqueue` | enqueue scrolling request instead of overriding all queued requests  | `false` | `true` |
 | `failOnCancel` | fail promise if scrolling request gets cancelled | `true` | `false` |
 | `softFrameSkip` | soften up frame skips by pausing if frame skip gets detected  | `false` | `true` |
