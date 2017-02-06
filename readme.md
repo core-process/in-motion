@@ -29,12 +29,13 @@ yarn add in-motion
 
 ## Usage
 
-| Parameter | Description | Default Value |
-| :--- | :--- | :--- |
-| `container` | scroll-container, either an `HTMLElement` or a `Window` | container of `target.element` if provided |
-| `` |  | `` |
-| `` |  | `` |
-| `` |  | `` |
-| `` |  | `` |
-| `` |  | `` |
+| Parameter | Description | Example | Default Value |
+| :--- | :--- | :--- | :--- |
+| `container` | scroll-container, either an `HTMLElement` or a `Window` | `window` | container of `target.element` if provided |
+| `target` | function which evaluates to target scroll coordinates | `() => { top }` | none |
+|          | or object which describes target scroll coordinates in relation to an `HTMLElement`: | | |
+| `target.element` | target element, either `HTMLElement` or a css selector string | `'.some .element'` | none |
+| `target.vertical` | vertical position in relation to target element, valid formats are `/(top)|(bottom)|(!?-?\d+px)|(!?-?\d+%)/` (enables vertical scrolling) | `'-20px'` | none |
+| `target.horizontal` | horizontal position in relation to target element, valid formats are `/(left)|(right)|(!?-?\d+px)|(!?-?\d+%)/` (enables horizontal scrolling) | `'-20px'` | none |
+| `target.skipIfVisible` | skip scrolling if target element is visible within container  | `true` | `false` |
 | `` |  | `` |
