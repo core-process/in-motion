@@ -203,19 +203,52 @@ export async function scroll(params) {
   validateContainer(container);
   validateTarget(target);
   validateEasing(easing);
-  validateDuration(duration);
   validateStoppable(stoppable);
   validateEnqueue(enqueue);
   validateFailOnCancel(failOnCancel);
   validateSoftFrameSkip(softFrameSkip);
 
+  // get origin metrics
+  const origin = getScrollMetrics(container).scrollPosition;
+
+  // fix and validate duration
+  if( typeof duration === 'function' ) {
+    const targetValue = target();
+    if(typeof targetValue.left !== 'undefined' && typeof targetValue.top !== 'undefined') {
+      duration = duration({
+        combined:
+          Math.sqrt(
+              Math.pow(Math.abs(targetValue.left-origin.left), 2)
+            + Math.pow(Math.abs(targetValue.top-origin.top), 2)
+          ),
+        left: Math.abs(targetValue.left-origin.left),
+        top: Math.abs(targetValue.top-origin.top),
+      });
+    }
+    else
+    if(typeof targetValue.left !== 'undefined') {
+      duration = duration({
+        combined: Math.abs(targetValue.left-origin.left),
+        left: Math.abs(targetValue.left-origin.left),
+      });
+    }
+    else
+    if(typeof targetValue.top !== 'undefined') {
+      duration = duration({
+        combined: Math.abs(targetValue.top-origin.top),
+        top: Math.abs(targetValue.top-origin.top),
+      });
+    }
+    else {
+      duration = duration({ total: 0 });
+    }
+  }
+  validateDuration(duration);
+
   // skip if possible
   if(skipHorizontal && skipVertical) {
     return { status: 'skipped', progress: 0, duration };
   }
-
-  // get origin metrics
-  const origin = getScrollMetrics(container).scrollPosition;
 
   // clear queue if requested
   if(!enqueue) {
