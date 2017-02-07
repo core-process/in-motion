@@ -63,7 +63,10 @@ export function containerFrame(container, now) {
     sequence.progress + timeDelta,
     sequence.duration
   );
-  sequence.relativeProgress = sequence.progress / sequence.duration;
+  sequence.relativeProgress =
+    (sequence.duration != 0)
+      ? (sequence.progress / sequence.duration)
+      : 1.0;
 
   // determine target
   const oldTargetValue = sequence.targetValue;
