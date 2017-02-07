@@ -6,7 +6,7 @@ setTimeout(
       container: document.querySelector('.container'),
       target: { element: '.target2', vertical: '-10%', skipIfVisible: false },
       easing: 'easeInOutCubic',
-      duration: 3 * 1000,
+      duration: (distance) => distance.combined * 10,
     });
     console.log(JSON.stringify(result));
   },
