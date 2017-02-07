@@ -9,10 +9,13 @@ export function findContainer(element, vertical, horizontal) {
   }
   // get parent element and check for top-level container
   var container = element.parentNode;
-  if(  element instanceof Window
+  if(  container instanceof Window
     || container.tagName == 'HTML'
     || container.tagName == 'BODY'
   ) {
+    if(container instanceof Window) {
+      return container;
+    }
     return element.ownerDocument.defaultView;
   }
   // check for intermediate container
