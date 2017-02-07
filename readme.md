@@ -1,6 +1,6 @@
 # in-motion
 
-``in-motion`` is an excellent library for a smooth scroll experience, which supports handling of frame skips, sub-containers, scroll-stop on user interaction, and fluid adjustment if scroll-target relocates.
+An excellent library for a smooth scrolling experience, which supports handling of frame skips, sub-containers, scroll-stop on user interaction, and fluid adjustment if scroll-target relocates.
 
 ![npm downloads total](https://img.shields.io/npm/dt/in-motion.svg) ![npm version](https://img.shields.io/npm/v/in-motion.svg) ![npm license](https://img.shields.io/npm/l/in-motion.svg)
 
