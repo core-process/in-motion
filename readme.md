@@ -86,7 +86,7 @@ The function ``scroll`` exposes the signature ``(options) -> Promise``. The prom
 | `target.skipIfVisible` | skip scrolling if target element is visible within container  | `true` | `false` |
 | `easing` | easing behavior of scrolling animation, either a string or a function of signature `(x) => y` where `0 <= x <= 1` | `'swing'` | `'easeInOutCubic'` |
 | `duration` | duration of scrolling animation in milliseconds | `3 * 1000` | none |
-|            | or as a function deriving milliseconds from pixel distance | `(distance) => distance * 10` | none |
+|            | or as a function deriving milliseconds from pixel distance | `(distance) => distance.combined * 10` | none |
 | `stoppable` | stoppable by user interaction, e.g. mouse click, key press or mouse scrolling | `false` | `true` |
 | `enqueue` | enqueue scrolling request instead of overriding all queued requests  | `false` | `true` |
 | `failOnCancel` | fail promise if scrolling request gets cancelled | `true` | `false` |
