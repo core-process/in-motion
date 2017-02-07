@@ -251,6 +251,9 @@ export function stopScroll(container) {
     }
   }
   else {
+    if( typeof container === 'string' ) {
+      container = document.querySelector(container);
+    }
     validateContainer(container);
     clearQueue(container);
   }

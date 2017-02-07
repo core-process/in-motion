@@ -13,6 +13,46 @@
 * allows cancellation of scrolling on user interaction
 * fluid adjustment if scroll-target relocates while scrolling
 
+### Examples
+
+Scroll `'.container'` to `'-10%'` of targets height before `'.target'` within 3 seconds using `'easeInOutCubic'` easing:
+
+```
+scroll({
+  container: '.container',
+  target: { element: '.target', vertical: '-10%' },
+  easing: 'easeInOutCubic',
+  duration: 3 * 1000,
+});
+```
+
+Scroll window to top of `'.target'` within 3 seconds using `'swing'` easing:
+
+```
+scroll({
+  container: window,
+  target: { element: '.target', vertical: 'top' },
+  easing: 'swing',
+  duration: 3 * 1000,
+});
+```
+
+Scroll automatically detected container to top of `someElement` using custom easing and a function to derive duration from pixel distance:
+
+```
+scroll({
+  target: { element: someElement, vertical: 'top' },
+  easing: (x) => x,
+  duration: (distance) => distance * 10,
+});
+```
+
+Clear all scrolling requests of container `'.container'`:
+
+```
+stopScroll('.container');
+```
+
 ## Installation
 
 Install the `in-motion` module via
@@ -31,9 +71,9 @@ yarn add in-motion
 
 The module exports the functions ``scroll`` to enqueue a scrolling request and ``stopScroll`` to cancel all or specific scroll requests.
 
-## Enqueue Scroll Request
+### Scroll Request
 
-The function ``scroll`` exposes the signature ``scroll(options) -> Promise``. The promise returns once the scrolling request had been executed successfully. The following options are provided:
+The function ``scroll`` exposes the signature ``(options) -> Promise``. The promise returns once the scrolling request had been executed successfully. The following options are provided:
 
 | Parameter | Description | Example | Default Value |
 | :--- | :--- | :--- | :--- |
@@ -46,20 +86,12 @@ The function ``scroll`` exposes the signature ``scroll(options) -> Promise``. Th
 | `target.skipIfVisible` | skip scrolling if target element is visible within container  | `true` | `false` |
 | `easing` | easing behavior of scrolling animation, either a string or a function of signature `(x) => y` where `0 <= x <= 1` | `'swing'` | `'easeInOutCubic'` |
 | `duration` | duration of scrolling animation in milliseconds | `3 * 1000` | none |
+|            | or as a function deriving milliseconds from pixel distance | `(distance) => distance * 10` | none |
 | `stoppable` | stoppable by user interaction, e.g. mouse click, key press or mouse scrolling | `false` | `true` |
 | `enqueue` | enqueue scrolling request instead of overriding all queued requests  | `false` | `true` |
 | `failOnCancel` | fail promise if scrolling request gets cancelled | `true` | `false` |
 | `softFrameSkip` | soften up frame skips by pausing if frame skip gets detected  | `false` | `true` |
 
-### Example
+### Clear Requests
 
-Scroll `'.container'` to `'-10%'` of targets height before `'.target'` within 3 seconds using `'easeInOutCubic'` easing:
-
-```
-scroll({
-  container: '.container',
-  target: { element: '.target', vertical: '-10%' },
-  easing: 'easeInOutCubic',
-  duration: 3 * 1000,
-});
-```
+The function ``stopScroll`` exposes the signatures ``()`` to clear all scrolling requests and ``(container)`` to clear all scrolling requests of a container.
