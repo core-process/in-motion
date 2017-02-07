@@ -1,6 +1,6 @@
 
 export function getLocalClientRect(container, element) {
-  var containerRect = (container instanceof Window ? container.document.documentElement : container).getBoundingClientRect(),
+  var containerRect = container instanceof Window ? { left: 0, top: 0 } : container.getBoundingClientRect(),
       containerMetrics = getScrollMetrics(container),
       elementRect = element.getBoundingClientRect();
   return {
