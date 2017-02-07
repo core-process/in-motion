@@ -29,9 +29,11 @@ yarn add in-motion
 
 ## Usage
 
-The module exports the functions ``scroll({ ... }) -> Promise`` and ``stopScroll(container)``.
+The module exports the functions ``scroll`` to enqueue a scrolling request and ``stopScroll`` to cancel all or specific scroll requests.
 
-### scroll
+## Enqueue Scroll Request
+
+The function ``scroll`` exposes the signature ``scroll(options) -> Promise``. The promise returns once the scrolling request had been executed successfully. The following options are provided:
 
 | Parameter | Description | Example | Default Value |
 | :--- | :--- | :--- | :--- |
@@ -48,3 +50,16 @@ The module exports the functions ``scroll({ ... }) -> Promise`` and ``stopScroll
 | `enqueue` | enqueue scrolling request instead of overriding all queued requests  | `false` | `true` |
 | `failOnCancel` | fail promise if scrolling request gets cancelled | `true` | `false` |
 | `softFrameSkip` | soften up frame skips by pausing if frame skip gets detected  | `false` | `true` |
+
+### Example
+
+Scroll `'.container'` to `'-10%'` of targets height before `'.target'` within 3 seconds using `'easeInOutCubic'` easing:
+
+```
+scroll({
+  container: '.container',
+  target: { element: '.target', vertical: '-10%' },
+  easing: 'easeInOutCubic',
+  duration: 3 * 1000,
+});
+```

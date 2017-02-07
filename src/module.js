@@ -113,6 +113,9 @@ export async function scroll(params) {
       skipVertical = false;
 
   // fix parameter
+  if( typeof container === 'string' ) {
+    container = document.querySelector(container);
+  }
   if( typeof target === 'object' ) {
     if(typeof target.left === 'number' || typeof target.top === 'number') {
       const value = target;
