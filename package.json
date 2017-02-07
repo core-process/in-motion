@@ -1,6 +1,6 @@
 {
   "name": "in-motion",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "An excellent library for a smooth scrolling experience, which supports handling of frame skips, sub-containers, scroll-stop on user interaction, and fluid adjustment if scroll-target relocates.",
   "main": "build/module.js",
   "scripts": {
