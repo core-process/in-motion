@@ -221,22 +221,22 @@ export async function scroll(params) {
               Math.pow(Math.abs(targetValue.left-origin.left), 2)
             + Math.pow(Math.abs(targetValue.top-origin.top), 2)
           ),
-        left: Math.abs(targetValue.left-origin.left),
-        top: Math.abs(targetValue.top-origin.top),
+        left: targetValue.left-origin.left,
+        top: targetValue.top-origin.top,
       });
     }
     else
     if(typeof targetValue.left !== 'undefined') {
       duration = duration({
-        combined: Math.abs(targetValue.left-origin.left),
-        left: Math.abs(targetValue.left-origin.left),
+        combined: targetValue.left-origin.left,
+        left: targetValue.left-origin.left,
       });
     }
     else
     if(typeof targetValue.top !== 'undefined') {
       duration = duration({
-        combined: Math.abs(targetValue.top-origin.top),
-        top: Math.abs(targetValue.top-origin.top),
+        combined: targetValue.top-origin.top,
+        top: targetValue.top-origin.top,
       });
     }
     else {
