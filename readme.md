@@ -17,7 +17,7 @@
 
 Scroll `'.container'` to `'-10%'` of targets height before `'.target'` within 3 seconds using `'easeInOutCubic'` easing:
 
-```
+```js
 scroll({
   container: '.container',
   target: { element: '.target', vertical: '-10%' },
@@ -28,7 +28,7 @@ scroll({
 
 Scroll window to top of `'.target'` within 3 seconds using `'swing'` easing:
 
-```
+```js
 scroll({
   container: window,
   target: { element: '.target', vertical: 'top' },
@@ -39,7 +39,7 @@ scroll({
 
 Scroll automatically detected container to top of `someElement` using custom easing and a function to derive duration from pixel distance:
 
-```
+```js
 scroll({
   target: { element: someElement, vertical: 'top' },
   easing: (x) => x,
@@ -49,7 +49,7 @@ scroll({
 
 Clear all scrolling requests of container `'.container'`:
 
-```
+```js
 stopScroll('.container');
 ```
 
