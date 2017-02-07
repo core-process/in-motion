@@ -43,7 +43,7 @@ Scroll automatically detected container to top of `someElement` using custom eas
 scroll({
   target: { element: someElement, vertical: 'top' },
   easing: (x) => x,
-  duration: (distance) => distance * 10,
+  duration: (distance) => distance.combined * 10,
 });
 ```
 
