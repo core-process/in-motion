@@ -76,3 +76,37 @@ export function setScrollPosition(container, { top, left }) {
   console.log(container);
   throw new Error('invalid container type');
 }
+
+export function calculateDistance(point1, point2) {
+  // calculate distance
+  if(  typeof point1.left !== 'undefined' && typeof point1.top !== 'undefined'
+    && typeof point2.left !== 'undefined' && typeof point2.top !== 'undefined'
+  ) {
+    return {
+      combined:
+        Math.sqrt(
+            Math.pow(Math.abs(point2.left-point1.left), 2)
+          + Math.pow(Math.abs(point2.top-point1.top), 2)
+        ),
+      left: point2.left-point1.left,
+      top: point2.top-point1.top,
+    };
+  }
+  else
+  if(typeof point1.left !== 'undefined' && typeof point2.left !== 'undefined') {
+    return {
+      combined: point2.left-point1.left,
+      left: point2.left-point1.left,
+    };
+  }
+  else
+  if(typeof point1.top !== 'undefined' && typeof point2.top !== 'undefined') {
+    return {
+      combined: point2.top-point1.top,
+      top: point2.top-point1.top,
+    };
+  }
+  else {
+    return { combined: 0 };
+  }
+}

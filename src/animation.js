@@ -49,8 +49,23 @@ export function containerFrame(container, now) {
   }
   const sequence = queue[0];
 
+  // calculate current target value
+  const curTargetValue = sequence.target();
+
+  // check pause condition
+  let pauseCondition = false;
+  if(sequence.pauseCondition) {
+    const curPos = getScrollMetrics(container).scrollPosition;
+    const distance = calculateDistance(curPos, curTargetValue);
+    pauseCondition = sequence.pauseCondition(distance);
+  }
+
   // calculate time delta and detect frame drops
   let timeDelta = now - lastTimestamp;
+  if(pauseCondition) {
+    timeDelta = 0;
+  }
+  else
   if(timeDelta >= 30) {
     if(sequence.softFrameSkip) {
       timeDelta = 30;
@@ -68,9 +83,9 @@ export function containerFrame(container, now) {
       ? (sequence.progress / sequence.duration)
       : 1.0;
 
-  // determine target
+  // update target
   const oldTargetValue = sequence.targetValue;
-  sequence.targetValue = sequence.target();
+  sequence.targetValue = curTargetValue;
 
   // handle target update
   if(!_.isEqual(sequence.targetValue, oldTargetValue)) {

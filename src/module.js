@@ -1,6 +1,6 @@
 import * as easings from './easings.js';
 import { addToQueue, clearQueue, getActiveQueues } from './queueing.js';
-import { getScrollMetrics, getLocalClientRect } from './metrics.js';
+import { getScrollMetrics, getLocalClientRect, calculateDistance } from './metrics.js';
 import { findContainer } from './container.js';
 import './interaction.js';
 
@@ -57,6 +57,12 @@ function validateSoftFrameSkip(softFrameSkip) {
   }
 }
 
+function validatePauseCondition(pauseCondition) {
+  if( typeof pauseCondition !== 'function' ) {
+    throw new Error('invalid pauseCondition');
+  }
+}
+
 function toPixel(base, span, value) {
   if(typeof value === 'string') {
     if(!isNaN(value)) {
@@ -107,6 +113,7 @@ export async function scroll(params) {
     enqueue,
     failOnCancel,
     softFrameSkip,
+    pauseCondition,
   } = params;
 
   let skipHorizontal = false,
@@ -207,41 +214,14 @@ export async function scroll(params) {
   validateEnqueue(enqueue);
   validateFailOnCancel(failOnCancel);
   validateSoftFrameSkip(softFrameSkip);
+  validatePauseCondition(pauseCondition);
 
   // get origin metrics
   const origin = getScrollMetrics(container).scrollPosition;
 
   // fix and validate duration
   if( typeof duration === 'function' ) {
-    const targetValue = target();
-    if(typeof targetValue.left !== 'undefined' && typeof targetValue.top !== 'undefined') {
-      duration = duration({
-        combined:
-          Math.sqrt(
-              Math.pow(Math.abs(targetValue.left-origin.left), 2)
-            + Math.pow(Math.abs(targetValue.top-origin.top), 2)
-          ),
-        left: targetValue.left-origin.left,
-        top: targetValue.top-origin.top,
-      });
-    }
-    else
-    if(typeof targetValue.left !== 'undefined') {
-      duration = duration({
-        combined: targetValue.left-origin.left,
-        left: targetValue.left-origin.left,
-      });
-    }
-    else
-    if(typeof targetValue.top !== 'undefined') {
-      duration = duration({
-        combined: targetValue.top-origin.top,
-        top: targetValue.top-origin.top,
-      });
-    }
-    else {
-      duration = duration({ total: 0 });
-    }
+    duration = duration(calculateDistance(origin, target()));
   }
   validateDuration(duration);
 
@@ -265,6 +245,7 @@ export async function scroll(params) {
       duration,
       stoppable,
       softFrameSkip,
+      pauseCondition,
       (result) => {
         if(failOnCancel && result.status === 'cancelled') {
           reject(new Error('cancelled'));
