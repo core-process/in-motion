@@ -3,7 +3,7 @@ import {
   hasActiveQueues, getActiveQueues,
   getQueue, deactivateQueue
 } from './queueing.js';
-import { getScrollMetrics, setScrollPosition } from './metrics.js';
+import { getScrollMetrics, setScrollPosition, calculateDistance } from './metrics.js';
 
 let currentRequest = null;
 let lastTimestamp = null;
