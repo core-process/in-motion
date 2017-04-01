@@ -1,20 +1,23 @@
 import { getActiveQueues, getQueue, clearQueue } from './queueing.js';
 
 function onInteraction(event) {
+  let stopped = false;
   for(let container of getActiveQueues()) {
     const queue = getQueue(container);
     if(queue.length > 0 && queue[0].stoppable) {
       clearQueue(container);
+      stopped = true;
     }
   }
+  return stopped;
 }
 
 function onInteractionGulp(event) {
-  if(event) {
+  const stopped = onInteraction(event);
+  if(stopped && event) {
     event.stopPropagation();
     event.preventDefault();
   }
-  onInteraction(event);
 }
 
 window.addEventListener('click', onInteraction, true);
