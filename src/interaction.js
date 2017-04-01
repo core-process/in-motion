@@ -20,8 +20,8 @@ function onInteractionGulp(event) {
   }
 }
 
-window.addEventListener('click', onInteraction, true);
-window.addEventListener('contextmenu', onInteraction, true);
+window.addEventListener('click', onInteractionGulp, true);
+window.addEventListener('contextmenu', onInteractionGulp, true);
 window.addEventListener('touchstart', onInteraction, true);
 window.addEventListener('mousewheel', onInteraction, true);
 window.addEventListener('DOMMouseScroll', onInteraction, true);
